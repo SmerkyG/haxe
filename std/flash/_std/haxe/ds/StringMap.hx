@@ -24,7 +24,7 @@ package haxe.ds;
 @:coreApi class StringMap<T> implements haxe.Constraints.IMap<String,T> {
 	// reserved words that are not allowed in Dictionary include all non-static members of Dictionary
 	private static var reservedWords:Array<String> = ["constructor", "hasOwnProperty", "isPrototypeOf", "propertyIsEnumerable", "setPropertyIsEnumerable", "toLocaleString", "toString", "valueOf", "toJSON"];
-	private static var reservedWordIndexers:Array<ReservedWordIndexer> = [for(v in 0...reservedWords.length) new ReservedWordIndexer(v)];
+	private static var reservedWordIndexers:Array<ReservedWordIndexer> = [new ReservedWordIndexer(0), new ReservedWordIndexer(1), new ReservedWordIndexer(2), new ReservedWordIndexer(3), new ReservedWordIndexer(4), new ReservedWordIndexer(5), new ReservedWordIndexer(6), new ReservedWordIndexer(7), new ReservedWordIndexer(8)];
 	
 	private var h : flash.utils.Dictionary;
 
