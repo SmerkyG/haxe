@@ -170,6 +170,6 @@ map["foo"] == 9;
 ['' => ''].iterator().next() == '';
 [2 => 3].keys().next() == 2;
 [2 => 3].iterator().next() == 3;
-//[a => b].keys().next() == a;
-//[a => b].iterator().next() == b;
+[a => b].keys().next() == a;
+[a => b].iterator().next() == b;
 #end

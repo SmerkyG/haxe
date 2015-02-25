@@ -40,11 +40,11 @@ class ObjectMap<K:{},V> extends flash.utils.Dictionary implements haxe.Constrain
 	#else
 
 	public function keys() : Iterator<K> {
-		return NativePropertyIterator.iterator(this);
+		return new ObjectMapKeysIterator<K>(this);
 	}
 
 	public function iterator() : Iterator<V> {
-		return NativeValueIterator.iterator(this);
+		return new ObjectMapValuesIterator<V>(this);
 	}
 
 	#end
@@ -61,60 +61,61 @@ class ObjectMap<K:{},V> extends flash.utils.Dictionary implements haxe.Constrain
 	}
 }
 
-private class NativePropertyIterator {
-	var collection:Dynamic;
-	var index:Int = 0;
+#if !as3
 
-	public static inline function iterator(collection:Dynamic):NativePropertyIterator {
-		var result = new NativePropertyIterator();
-		result.collection = collection;
-		return result;
+// this version uses __has_next__/__forin__ special SWF opcodes for iteration with no allocation
+
+@:allow(haxe.ds.ObjectMap)
+private class ObjectMapKeysIterator<K> {
+	var h:Dynamic;
+	var index : Int;
+	var nextIndex : Int;
+
+	inline function new(h:Dynamic):Void {
+		this.h = h;
+		this.index = 0;
+		hasNext();
 	}
-
-	function new() {}
 
 	public inline function hasNext():Bool {
-		var c = collection;
-		var i = index;
-		var result = untyped __has_next__(c, i);
-		collection = c;
-		index = i;
-		return result;
+		var h = h, index = index; // tmp vars required for __has_next
+		var n = untyped __has_next__(h, index);
+		this.nextIndex = index; // store next index
+		return n;
 	}
 
-	public inline function next():Dynamic {
-		var i = index;
-		var result = untyped __forin__(collection, i);
-		index = i;
-		return result;
+	public inline function next():K {
+		var r : K = untyped __forin__(h, nextIndex);
+		index = nextIndex;
+		return r;
 	}
+
 }
 
-private class NativeValueIterator {
-	var collection:Dynamic;
-	var index:Int = 0;
+@:allow(haxe.ds.ObjectMap)
+private class ObjectMapValuesIterator<T> {
+	var h:Dynamic;
+	var index : Int;
+	var nextIndex : Int;
 
-	public static inline function iterator(collection:Dynamic):NativeValueIterator {
-		var result = new NativeValueIterator();
-		result.collection = collection;
-		return result;
+	inline function new(h:Dynamic):Void {
+		this.h = h;
+		this.index = 0;
+		hasNext();
 	}
-
-	function new() {}
 
 	public inline function hasNext():Bool {
-		var c = collection;
-		var i = index;
-		var result = untyped __has_next__(c, i);
-		collection = c;
-		index = i;
-		return result;
+		var h = h, index = index; // tmp vars required for __has_next
+		var n = untyped __has_next__(h, index);
+		this.nextIndex = index; // store next index
+		return n;
 	}
 
-	public inline function next():Dynamic {
-		var i = index;
-		var result = untyped __foreach__(collection, i);
-		index = i;
-		return result;
+	public inline function next():T {
+		var r = untyped __foreach__(h, nextIndex);
+		index = nextIndex;
+		return r;
 	}
+
 }
+#end
